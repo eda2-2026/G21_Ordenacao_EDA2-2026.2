@@ -42,8 +42,9 @@ void Menu::executar() {
         switch (opcao) {
             case 1: {
                 std::cout << "\n========= Cadastrar Livro =========" << std::endl;
-                std::string isbn, titulo, autor, editora, anoInformado;
+                std::string isbn, titulo, autor, editora, anoInformado, quantidadeInformada;
                 int ano = 0;
+                int quantidadeVendidos = 0;
 
                 std::cout << "ISBN: ";
                 std::getline(std::cin, isbn);
@@ -67,12 +68,23 @@ void Menu::executar() {
                     break;
                 }
 
+                std::cout << "Quantidade de exemplares vendidos: ";
+                std::getline(std::cin, quantidadeInformada);
+
+                std::istringstream conversorQuantidade(quantidadeInformada);
+                if (!(conversorQuantidade >> quantidadeVendidos) ||
+                    (conversorQuantidade >> caractereExtra) || quantidadeVendidos < 0) {
+                    std::cout << "[Erro] Quantidade inválida! Digite um número inteiro não negativo."
+                              << std::endl;
+                    break;
+                }
+
                 if (isbn.empty() || titulo.empty() || autor.empty() || editora.empty()) {
                     std::cout << "[Erro] Todos os campos são obrigatórios." << std::endl;
                     break;
                 }
 
-                Livro livro(isbn, titulo, autor, editora, ano);
+                Livro livro(isbn, titulo, autor, editora, ano, quantidadeVendidos);
                 
                 if (catalogo.cadastrar(livro)) {
                     std::cout << "[Info] Livro cadastrado!" << std::endl;
@@ -99,6 +111,7 @@ void Menu::executar() {
                 std::cout << "Autor(a): " << livro->getAutor() << std::endl;
                 std::cout << "Editora: " << livro->getEditora() << std::endl;
                 std::cout << "Ano de publicação: " << livro->getAnoPublicacao() << std::endl;
+                std::cout << "Quantidade de exemplares vendidos: " << livro->getQuantidadeVendidos() << std::endl;
                 break;
             }
             case 3: {
@@ -120,6 +133,7 @@ void Menu::executar() {
                     std::cout << "Autor(a): " << livro.getAutor() << std::endl;
                     std::cout << "Editora: " << livro.getEditora() << std::endl;
                     std::cout << "Ano de publicação: " << livro.getAnoPublicacao() << std::endl;
+                    std::cout << "Quantidade de exemplares vendidos: " << livro.getQuantidadeVendidos() << std::endl;
                 }
                 break;
             }
@@ -139,6 +153,7 @@ void Menu::executar() {
                 std::string autor = livroAtual->getAutor();
                 std::string editora = livroAtual->getEditora();
                 int ano = livroAtual->getAnoPublicacao();
+                int quantidadeVendidos = livroAtual->getQuantidadeVendidos();
                 std::string entrada;
 
                 std::cout << "Novo título [enter para manter o atual]: ";
@@ -174,7 +189,23 @@ void Menu::executar() {
                     ano = novoAno;
                 }
 
-                Livro livroAtualizado(isbn, titulo, autor, editora, ano);
+                std::cout << "Nova quantidade de exemplares vendidos [enter para manter a atual]: ";
+                std::getline(std::cin, entrada);
+                if (!entrada.empty()) {
+                    std::istringstream conversorQuantidade(entrada);
+                    int novaQuantidade = 0;
+                    char caractereExtra;
+
+                    if (!(conversorQuantidade >> novaQuantidade) ||
+                        (conversorQuantidade >> caractereExtra) || novaQuantidade < 0) {
+                        std::cout << "[Erro] Quantidade inválida! Digite um número inteiro positivo." << std::endl;
+                        break;
+                    }
+
+                    quantidadeVendidos = novaQuantidade;
+                }
+
+                Livro livroAtualizado(isbn, titulo, autor, editora, ano, quantidadeVendidos);
                 if (catalogo.atualizar(livroAtualizado)) {
                     std::cout << "[Info] Livro atualizado!" << std::endl;
                 } else {
@@ -209,6 +240,7 @@ void Menu::executar() {
                     std::cout << "Autor(a): " << livro.getAutor() << std::endl;
                     std::cout << "Editora: " << livro.getEditora() << std::endl;
                     std::cout << "Ano de publicação: " << livro.getAnoPublicacao() << std::endl;
+                    std::cout << "Quantidade de exemplares vendidos: " << livro.getQuantidadeVendidos() << std::endl;
                 }
                 break;
             }

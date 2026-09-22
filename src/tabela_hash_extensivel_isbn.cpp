@@ -12,19 +12,17 @@
 #include <utility>
 
 namespace {
+	std::string formatarIndiceBinario(std::size_t indice, std::size_t quantidadeBits) {
+		std::string resultado(quantidadeBits, '0');
 
-std::string formatarIndiceBinario(std::size_t indice, std::size_t quantidadeBits) {
-	std::string resultado(quantidadeBits, '0');
-
-	for (std::size_t bit = 0; bit < quantidadeBits; ++bit) {
-		if ((indice & (std::size_t{1} << bit)) != 0) {
-			resultado[quantidadeBits - bit - 1] = '1';
+		for (std::size_t bit = 0; bit < quantidadeBits; ++bit) {
+			if ((indice & (std::size_t{1} << bit)) != 0) {
+				resultado[quantidadeBits - bit - 1] = '1';
+			}
 		}
+
+		return resultado;
 	}
-
-	return resultado;
-}
-
 }
 
 BucketIsbn::BucketIsbn(std::size_t profundidadeLocal, std::size_t capacidade)
@@ -121,7 +119,8 @@ bool TabelaHashExtensivelIsbn::inserir(const Livro &livro) {
 	}
 
 	std::uint64_t hash = calcularHash(isbnNormalizado);
-	Livro livroNormalizado(isbnNormalizado, livro.getTitulo(), livro.getAutor(), livro.getEditora(), livro.getAnoPublicacao());
+	Livro livroNormalizado(isbnNormalizado, livro.getTitulo(), livro.getAutor(),
+	                       livro.getEditora(), livro.getAnoPublicacao(), livro.getQuantidadeVendidos());
 
 	while (true) {
 		auto bucket = diretorio[calcularIndice(hash)];
@@ -176,7 +175,8 @@ bool TabelaHashExtensivelIsbn::atualizar(const Livro &livro) {
 	}
 
 	auto &bucket = diretorio[calcularIndice(calcularHash(isbnNormalizado))];
-	Livro livroNormalizado(isbnNormalizado, livro.getTitulo(), livro.getAutor(), livro.getEditora(), livro.getAnoPublicacao());
+	Livro livroNormalizado(isbnNormalizado, livro.getTitulo(), livro.getAutor(),
+	                       livro.getEditora(), livro.getAnoPublicacao(), livro.getQuantidadeVendidos());
 
 	for (Livro &livroExistente : bucket->livros) {
 		if (livroExistente.getIsbn() == isbnNormalizado) {
