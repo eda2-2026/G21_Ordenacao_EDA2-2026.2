@@ -38,8 +38,9 @@ Em caso de empate no critério principal, são utilizados critérios secundário
 ### Regras de ordenação, desempate e métricas
 
 As regras abaixo definem o contrato para a implementação da ordenação. Os tipos
-estão declarados em `include/ordenacao.h`; os comparadores, o Merge Sort e a
-integração com o menu ainda serão implementados.
+estão declarados em `include/ordenacao.h`, e os comparadores com desempates estão
+implementados em `src/ordenacao.cpp`, pela função `compararLivros()`. O Merge Sort
+e a integração com o menu ainda serão implementados.
 
 #### Critérios e normalização
 
@@ -188,3 +189,20 @@ Para remover o executável gerado:
 ```bash
 make clean
 ```
+
+## Testes dos comparadores
+
+Os testes verificam os cinco critérios nas duas direções, normalização,
+desempates crescentes, equivalência, limites numéricos e propriedades da ordem.
+Eles validam os comparadores; os testes do Merge Sort serão adicionados quando
+o algoritmo for implementado.
+
+Na raiz do projeto, com `g++` disponível, compile e execute:
+
+```bash
+g++ -Wall -Wextra -pedantic -std=c++17 -Iinclude tests/comparadores.cpp src/ordenacao.cpp src/livro.cpp src/normalizacao.cpp -o /tmp/g21-testes-comparadores
+/tmp/g21-testes-comparadores
+```
+
+O comando acima usa `/tmp` no Linux. No Windows, escolha um caminho de saída
+local com a extensão `.exe` e execute o arquivo correspondente.

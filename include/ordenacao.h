@@ -1,6 +1,8 @@
 #ifndef ORDENACAO_H
 #define ORDENACAO_H
 
+#include "livro.h"
+
 #include <cstdint>
 
 enum class CriterioOrdenacao {
@@ -28,5 +30,11 @@ struct MetricasOrdenacao {
     // Tempo apenas da ordenação; preparação e exibição ficam de fora.
     double tempoMicrossegundos = 0.0;
 };
+
+// Retorna true somente se primeiro deve vir antes de segundo.
+// Desempates são crescentes e livros equivalentes retornam false.
+// A contagem de métricas fica a cargo do algoritmo de ordenação.
+bool compararLivros(const Livro &primeiro, const Livro &segundo,
+                    CriterioOrdenacao criterio, Direcao direcao);
 
 #endif
