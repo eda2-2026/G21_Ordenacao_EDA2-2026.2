@@ -41,7 +41,7 @@ As regras abaixo definem o contrato para a implementação da ordenação. Os ti
 estão declarados em `include/ordenacao.h`, e os comparadores com desempates estão
 implementados em `src/ordenacao.cpp`, pela função `compararLivros()`. A função
 `mergeSort()` implementa a ordenação recursiva estável e retorna suas métricas.
-A integração com o catálogo e o menu ainda será implementada.
+O catálogo integra a ordenação por `listarOrdenados()`, disponível na opção 9 do menu.
 
 #### Critérios e normalização
 
@@ -130,7 +130,7 @@ O projeto reutiliza o sistema de biblioteca desenvolvido no Trabalho 1, que já 
 - Cormalização de ISBN e título;
 - Menu interativo.
 
-As estruturas de busca continuam responsáveis pelo armazenamento e pelas consultas. O método `listarTodos()` recupera os livros das tabelas hash e os retorna em um vetor independente. A integração prevista pelo método `listarOrdenados()` aplicará o Merge Sort sobre esse vetor, de acordo com o critério e a direção escolhidos, e devolverá a lista de livros ordenada.
+As estruturas de busca continuam responsáveis pelo armazenamento e pelas consultas. O método `listarTodos()` recupera os livros das tabelas hash e os retorna em um vetor independente. O método `listarOrdenados()` aplica o Merge Sort sobre esse vetor, de acordo com o critério e a direção escolhidos, e devolve um `ResultadoOrdenacao` contendo os livros ordenados e as métricas. O catálogo e seus índices permanecem inalterados.
 
 ## Screenshots
 
@@ -202,9 +202,17 @@ comandos.
 O Ninja é o gerador recomendado na [documentação do MSYS2 sobre CMake](https://www.msys2.org/docs/cmake/).
 O compilador continua sendo o MinGW `g++`.
 
-No menu atual, use **8** para carregar os livros de demonstração e **6** para
-listá-los. A ordenação ainda não está integrada ao menu; use os testes descritos
-abaixo para validar os comparadores e o Merge Sort.
+No menu, use **8** para carregar os livros de demonstração e **9** para ordenar.
+Escolha um critério: **1** título, **2** autor, **3** ano, **4** ISBN ou **5**
+quantidade de vendidos. Em seguida, escolha **1** crescente ou **2** decrescente.
+A aplicação exibe todos os campos dos livros ordenados, o total, as comparações,
+as movimentações e o tempo em microssegundos. **0** em qualquer etapa do submenu
+volta ao menu principal. Entradas inválidas são rejeitadas e solicitadas novamente.
+
+Por exemplo, a sequência **8 → 9 → 5 → 2** lista os livros mais vendidos primeiro.
+A opção **6** continua listando os livros na ordem original recuperada do catálogo.
+Catálogos vazios exibem uma mensagem e métricas zeradas; um único livro também
+retorna métricas zeradas.
 
 #### Linux ou macOS
 
@@ -251,8 +259,8 @@ local com a extensão `.exe` e execute o arquivo correspondente.
 ## Merge Sort e métricas
 
 `mergeSort()` recebe um `std::vector<Livro>&`, o critério e a direção, ordena o
-próprio vetor recebido e devolve uma nova `MetricasOrdenacao`. Na futura
-integração com o catálogo, o vetor passado será a cópia de `listarTodos()`.
+próprio vetor recebido e devolve uma nova `MetricasOrdenacao`. Na integração
+com o catálogo, `listarOrdenados()` passa a cópia obtida por `listarTodos()`.
 
 ```cpp
 auto livros = catalogo.listarTodos();
@@ -285,3 +293,27 @@ g++ -Wall -Wextra -pedantic -std=c++17 -Iinclude tests/merge_sort.cpp src/ordena
 
 Assim como nos testes dos comparadores, no Windows adapte o caminho de saída
 para um executável local com extensão `.exe`.
+
+
+## Testes de integração da ordenação
+
+O teste do catálogo verifica os cinco critérios nas duas direções, os casos
+vazio e unitário e a preservação da ordem original, dos campos e dos índices.
+No Git Bash/MinGW64, compile e execute na raiz do projeto:
+
+```bash
+g++ -Wall -Wextra -pedantic -std=c++17 -Iinclude tests/catalogo_ordenacao.cpp src/catalogo.cpp src/funcao_hash.cpp src/indice_titulos_hash.cpp src/livro.cpp src/livros_exemplo.cpp src/normalizacao.cpp src/ordenacao.cpp src/tabela_hash_extensivel_isbn.cpp -o testes-catalogo.exe
+./testes-catalogo.exe
+```
+
+O teste do menu requer Python 3 e o executável da aplicação já compilado.
+Ele percorre os critérios e direções, verifica a ordem exibida e as métricas e
+exercita entradas inválidas, cancelamento e fim de entrada. Usando a compilação
+CMake descrita acima:
+
+```bash
+python tests/menu_ordenacao.py ./build-mingw/biblioteca.exe
+```
+
+Se compilou diretamente com `g++`, use `./biblioteca.exe` como argumento. No
+Linux, use `python3` e o caminho do executável correspondente.

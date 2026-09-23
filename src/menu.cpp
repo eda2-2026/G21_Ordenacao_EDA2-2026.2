@@ -3,11 +3,93 @@
 #include "livros_exemplo.h"
 
 #include <cstddef>
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
+
+namespace {
+    // Lê a linha inteira para rejeitar entradas como "1abc" ou "1.5".
+    // Zero também representa fim da entrada, permitindo sair sem repetir erros.
+    int lerOpcaoOrdenacao(int maiorOpcao) {
+        std::string entrada;
+        while (true) {
+            std::cout << "Escolha uma opção: ";
+            if (!std::getline(std::cin, entrada)) {
+                return 0;
+            }
+
+            std::istringstream conversor(entrada);
+            int opcao;
+            char extra;
+            if ((conversor >> opcao) && !(conversor >> extra) &&
+                opcao >= 0 && opcao <= maiorOpcao) {
+                return opcao;
+            }
+            std::cout << "[Erro] Opção inválida! Digite um número de 0 a "
+                      << maiorOpcao << "." << std::endl;
+        }
+    }
+
+    void executarOrdenacao(const Catalogo &catalogo) {
+        const CriterioOrdenacao criterios[] = {
+            CriterioOrdenacao::Titulo, CriterioOrdenacao::Autor,
+            CriterioOrdenacao::AnoPublicacao, CriterioOrdenacao::Isbn,
+            CriterioOrdenacao::QuantidadeVendidos
+        };
+        const char *nomes[] = {
+            "Título", "Autor", "Ano de publicação", "ISBN", "Quantidade de vendidos"
+        };
+
+        std::cout << "\n========= Ordenar Livros =========" << std::endl;
+        for (int i = 0; i < 5; ++i) {
+            std::cout << '[' << i + 1 << "] " << nomes[i] << std::endl;
+        }
+        std::cout << "[0] Voltar ao menu principal" << std::endl;
+        const int opcaoCriterio = lerOpcaoOrdenacao(5);
+        if (opcaoCriterio == 0) {
+            return;
+        }
+
+        std::cout << "\n========= Direção da Ordenação =========" << std::endl;
+        std::cout << "[1] Crescente" << std::endl;
+        std::cout << "[2] Decrescente" << std::endl;
+        std::cout << "[0] Voltar ao menu principal" << std::endl;
+        const int opcaoDirecao = lerOpcaoOrdenacao(2);
+        if (opcaoDirecao == 0) {
+            return;
+        }
+
+        const Direcao direcao = opcaoDirecao == 1 ? Direcao::Crescente : Direcao::Decrescente;
+        const auto resultado = catalogo.listarOrdenados(criterios[opcaoCriterio - 1], direcao);
+
+        std::cout << "\n========= Livros Ordenados =========" << std::endl;
+        std::cout << "Critério: " << nomes[opcaoCriterio - 1] << std::endl;
+        std::cout << "Direção: " << (opcaoDirecao == 1 ? "Crescente" : "Decrescente") << std::endl;
+        std::cout << "Total de livros: " << resultado.livros.size() << std::endl;
+        if (resultado.livros.empty()) {
+            std::cout << "[Info] Nenhum livro cadastrado." << std::endl;
+        }
+        for (const auto &livro : resultado.livros) {
+            std::cout << "\nISBN: " << livro.getIsbn() << std::endl;
+            std::cout << "Título: " << livro.getTitulo() << std::endl;
+            std::cout << "Autor(a): " << livro.getAutor() << std::endl;
+            std::cout << "Editora: " << livro.getEditora() << std::endl;
+            std::cout << "Ano de publicação: " << livro.getAnoPublicacao() << std::endl;
+            std::cout << "Quantidade de exemplares vendidos: "
+                      << livro.getQuantidadeVendidos() << std::endl;
+        }
+
+        std::ostringstream tempo;
+        tempo << std::fixed << std::setprecision(3) << resultado.metricas.tempoMicrossegundos;
+        std::cout << "\n========= Métricas da Ordenação =========" << std::endl;
+        std::cout << "Comparações: " << resultado.metricas.comparacoes << std::endl;
+        std::cout << "Movimentações: " << resultado.metricas.movimentacoes << std::endl;
+        std::cout << "Tempo de ordenação (microssegundos): " << tempo.str() << std::endl;
+    }
+}
 
 Menu::Menu(Catalogo &catalogo)
     : catalogo(catalogo) {
@@ -26,10 +108,14 @@ void Menu::executar() {
         std::cout << "[6] Listar todos os livros" << std::endl;
         std::cout << "[7] Visualizar hashing por ISBN" << std::endl;
         std::cout << "[8] Carregar livros de demonstração" << std::endl;
+        std::cout << "[9] Ordenar livros" << std::endl;
         std::cout << "[0] Sair" << std::endl;
         std::cout << "Escolha uma opção: ";
 
         if (!(std::cin >> opcao)) {
+            if (std::cin.eof()) {
+                return;
+            }
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             opcao = -1;
@@ -282,6 +368,9 @@ void Menu::executar() {
                           << std::endl;
                 break;
             }
+            case 9:
+                executarOrdenacao(catalogo);
+                break;
             case 0:
                 std::cout << "[Info] Saindo..." << std::endl;
                 break;
