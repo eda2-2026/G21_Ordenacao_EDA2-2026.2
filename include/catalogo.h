@@ -2,6 +2,7 @@
 #define CATALOGO_H
 
 #include "livro.h"
+#include "ordenacao.h"
 #include "indice_titulos_hash.h"
 #include "tabela_hash_extensivel_isbn.h"
 
@@ -9,6 +10,11 @@
 #include <string>
 #include <vector>
 #include <optional>
+
+struct ResultadoOrdenacao {
+    std::vector<Livro> livros;
+    MetricasOrdenacao metricas;
+};
 
 class Catalogo {
     
@@ -25,6 +31,7 @@ public:
     bool atualizar(const Livro &livro);
     bool removerPorIsbn(const std::string &isbn);
     std::vector<Livro> listarTodos() const;  
+    ResultadoOrdenacao listarOrdenados(CriterioOrdenacao criterio, Direcao direcao) const;
     void visualizarHashIsbn(std::ostream &saida) const;
 };
 

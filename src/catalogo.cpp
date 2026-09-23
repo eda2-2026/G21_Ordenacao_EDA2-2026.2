@@ -85,6 +85,13 @@ std::vector<Livro> Catalogo::listarTodos() const {
    return tabelaHashIsbn.listarTodos();
 }
 
+ResultadoOrdenacao Catalogo::listarOrdenados(CriterioOrdenacao criterio, Direcao direcao) const {
+   ResultadoOrdenacao resultado;
+   resultado.livros = listarTodos();
+   resultado.metricas = mergeSort(resultado.livros, criterio, direcao);
+   return resultado;
+}
+
 void Catalogo::visualizarHashIsbn(std::ostream &saida) const {
    tabelaHashIsbn.visualizarEstrutura(saida);
 }
