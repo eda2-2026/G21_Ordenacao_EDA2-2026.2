@@ -157,23 +157,63 @@ cd G21_Ordenacao_EDA2-2026.2
 
 ### Com CMake
 
-Na raiz do projeto, compile com:
+#### Windows no terminal MinGW64 (MSYS2 ou Git Bash)
+
+Use CMake, o compilador MinGW `g++` e Ninja disponíveis no `PATH` do terminal.
+Confira as ferramentas:
+
+```bash
+cmake --version
+g++ --version
+ninja --version
+```
+
+Se estiver no **MSYS2 MinGW64** e faltar alguma dessas ferramentas, instale os
+pacotes correspondentes:
+
+```bash
+pacman -S --needed mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja
+```
+
+O Git Bash não inclui `pacman`: nele, as ferramentas precisam estar instaladas
+e acessíveis pelo `PATH` antes de continuar.
+
+Entre na pasta onde clonou o projeto. Por exemplo, para o diretório local usado
+no desenvolvimento:
+
+```bash
+cd /c/Users/thiag/Desktop/projetos/G21_Ordenacao_EDA2-2026.2
+```
+
+Configure, compile e execute:
+
+```bash
+cmake -S . -B build-mingw -G Ninja -DCMAKE_CXX_COMPILER=g++
+cmake --build build-mingw
+./build-mingw/biblioteca.exe
+```
+
+O primeiro comando configura a compilação; o segundo gera o executável; o
+terceiro abre a aplicação. Após alterar o código, repita os dois últimos comandos.
+A pasta `build-mingw` deve ser exclusiva dessa configuração; se ela já tiver
+sido configurada com outro gerador ou compilador, escolha outra pasta nos três
+comandos.
+
+O Ninja é o gerador recomendado na [documentação do MSYS2 sobre CMake](https://www.msys2.org/docs/cmake/).
+O compilador continua sendo o MinGW `g++`.
+
+No menu atual, use **8** para carregar os livros de demonstração e **6** para
+listá-los. A ordenação ainda não está integrada ao menu; use os testes descritos
+abaixo para validar os comparadores e o Merge Sort.
+
+#### Linux ou macOS
+
+Na raiz do projeto, configure, compile e execute:
 
 ```bash
 cmake -S . -B build
 cmake --build build
-```
-
-No Linux ou macOS, execute:
-
-```bash
 ./build/biblioteca
-```
-
-No Windows com Ninja ou MinGW, execute:
-
-```bash
-./build/biblioteca.exe
 ```
 
 ### Com GNU Make
