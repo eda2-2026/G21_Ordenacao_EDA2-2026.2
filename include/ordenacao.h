@@ -4,6 +4,7 @@
 #include "livro.h"
 
 #include <cstdint>
+#include <vector>
 
 enum class CriterioOrdenacao {
     Titulo,
@@ -36,5 +37,10 @@ struct MetricasOrdenacao {
 // A contagem de métricas fica a cargo do algoritmo de ordenação.
 bool compararLivros(const Livro &primeiro, const Livro &segundo,
                     CriterioOrdenacao criterio, Direcao direcao);
+
+// Ordena o vetor recebido e retorna métricas exclusivas desta execução.
+// A preparação do auxiliar fica fora do tempo e dos contadores.
+MetricasOrdenacao mergeSort(std::vector<Livro> &livros,
+                           CriterioOrdenacao criterio, Direcao direcao);
 
 #endif

@@ -39,8 +39,9 @@ Em caso de empate no critério principal, são utilizados critérios secundário
 
 As regras abaixo definem o contrato para a implementação da ordenação. Os tipos
 estão declarados em `include/ordenacao.h`, e os comparadores com desempates estão
-implementados em `src/ordenacao.cpp`, pela função `compararLivros()`. O Merge Sort
-e a integração com o menu ainda serão implementados.
+implementados em `src/ordenacao.cpp`, pela função `compararLivros()`. A função
+`mergeSort()` implementa a ordenação recursiva estável e retorna suas métricas.
+A integração com o catálogo e o menu ainda será implementada.
 
 #### Critérios e normalização
 
@@ -129,7 +130,7 @@ O projeto reutiliza o sistema de biblioteca desenvolvido no Trabalho 1, que já 
 - Cormalização de ISBN e título;
 - Menu interativo.
 
-As estruturas de busca continuam responsáveis pelo armazenamento e pelas consultas. O método `listarTodos()` recupera os livros das tabelas hash e os retorna em um vetor independente. O método `listarOrdenados()` aplica o algoritmo do Merge Sort sobre esse vetor, de acordo com o critério e a direção escolhidos, e devolve a lista de livros ordenada. 
+As estruturas de busca continuam responsáveis pelo armazenamento e pelas consultas. O método `listarTodos()` recupera os livros das tabelas hash e os retorna em um vetor independente. A integração prevista pelo método `listarOrdenados()` aplicará o Merge Sort sobre esse vetor, de acordo com o critério e a direção escolhidos, e devolverá a lista de livros ordenada.
 
 ## Screenshots
 
@@ -194,8 +195,7 @@ make clean
 
 Os testes verificam os cinco critérios nas duas direções, normalização,
 desempates crescentes, equivalência, limites numéricos e propriedades da ordem.
-Eles validam os comparadores; os testes do Merge Sort serão adicionados quando
-o algoritmo for implementado.
+Eles validam os comparadores independentemente do algoritmo de ordenação.
 
 Na raiz do projeto, com `g++` disponível, compile e execute:
 
@@ -206,3 +206,42 @@ g++ -Wall -Wextra -pedantic -std=c++17 -Iinclude tests/comparadores.cpp src/orde
 
 O comando acima usa `/tmp` no Linux. No Windows, escolha um caminho de saída
 local com a extensão `.exe` e execute o arquivo correspondente.
+
+
+## Merge Sort e métricas
+
+`mergeSort()` recebe um `std::vector<Livro>&`, o critério e a direção, ordena o
+próprio vetor recebido e devolve uma nova `MetricasOrdenacao`. Na futura
+integração com o catálogo, o vetor passado será a cópia de `listarTodos()`.
+
+```cpp
+auto livros = catalogo.listarTodos();
+const auto metricas = mergeSort(livros, CriterioOrdenacao::QuantidadeVendidos,
+                               Direcao::Decrescente);
+```
+
+A implementação divide intervalos `[inicio, fim)` até restar no máximo um livro.
+Um único vetor auxiliar é preparado antes da medição e reutilizado nas
+intercalações. Quando dois livros são equivalentes, o da metade esquerda é
+escolhido primeiro, preservando a estabilidade em ambas as direções.
+
+Cada intercalação de `m` livros realiza `2 * m` movimentações: `m` escritas no
+auxiliar e `m` no vetor de destino. Cada escolha entre duas metades ainda não
+esgotadas conta uma comparação. Por exemplo, dois livros exigem uma comparação
+e quatro movimentações; vetores vazios e unitários retornam métricas zeradas.
+O cronômetro engloba apenas a chamada recursiva, conforme as convenções acima.
+
+### Testes do Merge Sort
+
+Os testes comparam o resultado com `std::stable_sort` (usado somente como
+referência nos testes), verificando todos os campos dos livros. Cobrem vetores
+vazios, unitários, ordenados, inversos, tamanhos ímpares, equivalências nas duas
+direções e contagens conhecidas de comparações e movimentações.
+
+```bash
+g++ -Wall -Wextra -pedantic -std=c++17 -Iinclude tests/merge_sort.cpp src/ordenacao.cpp src/livro.cpp src/normalizacao.cpp -o /tmp/g21-testes-merge-sort
+/tmp/g21-testes-merge-sort
+```
+
+Assim como nos testes dos comparadores, no Windows adapte o caminho de saída
+para um executável local com extensão `.exe`.
