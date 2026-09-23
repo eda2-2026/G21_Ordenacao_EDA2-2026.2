@@ -15,6 +15,7 @@ add_executable(biblioteca
     src/main.cpp
     src/menu.cpp
     src/normalizacao.cpp
+    src/ordenacao.cpp
     src/tabela_hash_extensivel_isbn.cpp
 )
 
