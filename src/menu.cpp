@@ -40,7 +40,7 @@ namespace {
             CriterioOrdenacao::QuantidadeVendidos
         };
         const char *nomes[] = {
-            "Título", "Autor", "Ano de publicação", "ISBN", "Quantidade de vendidos"
+            "Título", "Autor", "Ano de publicação", "ISBN", "Quantidade de exemplares vendidos"
         };
 
         std::cout << "\n========= Ordenar Livros =========" << std::endl;

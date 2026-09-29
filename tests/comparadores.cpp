@@ -90,13 +90,23 @@ int main() {
         verificarOrdem(extremoMaior, extremoMenor, criterio, Direcao::Decrescente);
     }
 
-    // A normalização atual distingue letras acentuadas maiúsculas e minúsculas.
-    verificarOrdem(Livro("10", "Árvore", "A", "A", 2020, 0),
-                   Livro("10", "árvore", "A", "A", 2020, 0),
+    // Maiúsculas, minúsculas e acentos portugueses são equivalentes.
+    const Livro acentuadoA("10", "  ÁRVORE da Computação ", "João Çosta", "A", 2020, 0);
+    const Livro acentuadoB("10", "arvore da computacao", "joao costa", "B", 2020, 0);
+    for (auto criterio : {CriterioOrdenacao::Titulo, CriterioOrdenacao::Autor}) {
+        for (auto direcao : direcoes) {
+            verificar(!compararLivros(acentuadoA, acentuadoB, criterio, direcao) &&
+                      !compararLivros(acentuadoB, acentuadoA, criterio, direcao),
+                      "Normalização de acentos incorreta");
+        }
+    }
+    verificarOrdem(Livro("10", "Álgebra", "A", "A", 2020, 0),
+                   Livro("20", "Zoologia", "A", "A", 2020, 0),
                    CriterioOrdenacao::Titulo, Direcao::Crescente);
 
     const std::vector<Livro> amostra = {
         menor, maior, base, equivalenteA, equivalenteB, extremoMenor, extremoMaior,
+        acentuadoA, acentuadoB,
         Livro("99", "Alfa", "Zelia", "B", 2020, 10),
         Livro("10", "Beta", "Maria", "B", 2020, 10),
         Livro("99", "Beta", "Ana", "B", 2020, 10)

@@ -31,7 +31,7 @@ A mesma implementação é utilizada para ordenar todos os campos. Um comparador
 - **Autor:** ordem alfabética;
 - **Ano de publicação:** ordem numérica;
 - **ISBN:** ordem textual do identificador normalizado;
-- **Quantidade de vendidos:** ordem numérica.
+- **Quantidade de exemplares vendidos:** ordem numérica.
 
 Em caso de empate no critério principal, são utilizados critérios secundários para produzir um resultado determinístico. Quando os livros são equivalentes em todos os critérios considerados, a estabilidade do algoritmo preserva sua ordem relativa original.
 
@@ -54,12 +54,10 @@ O catálogo integra a ordenação por `listarOrdenados()`, disponível na opçã
 | `QuantidadeVendidos` | Numérica, pela quantidade de exemplares vendidos | Título → Autor → ISBN |
 
 - Título e autor seguem as regras de `normalizarTitulo()`: remover espaços nas
-  extremidades, reduzir sequências de espaços a um e converter letras ASCII
-  para minúsculas. A comparação textual usa a ordem lexicográfica de
-  `std::string`, sem alterar o texto armazenado ou exibido.
-- A normalização atual preserva os bytes de caracteres não ASCII. Portanto,
-  acentos não são removidos, `Á` e `á` não são equivalentes e não há garantia de
-  ordem alfabética segundo as regras do português.
+  extremidades, reduzir sequências de espaços a um, converter letras para
+  minúsculas e remover acentos dos caracteres usados em português. Assim,
+  valores como `Árvore`, `árvore` e `arvore` são equivalentes para a ordenação,
+  sem alterar o texto original armazenado ou exibido.
 - O ISBN segue `normalizarIsbn()`: remover hífens e espaços e converter `x` para
   `X`. O identificador é comparado como texto, sem conversão para número.
 - As mesmas regras de normalização valem para os campos usados nos desempates.
@@ -127,7 +125,7 @@ O projeto reutiliza o sistema de biblioteca desenvolvido no Trabalho 1, que já 
 - Cadastro, consulta, atualização e remoção de livros;
 - Índice principal por ISBN com hashing extensível;
 - Índice secundário por título com encadeamento separado;
-- Cormalização de ISBN e título;
+- Normalização de ISBN e título;
 - Menu interativo.
 
 As estruturas de busca continuam responsáveis pelo armazenamento e pelas consultas. O método `listarTodos()` recupera os livros das tabelas hash e os retorna em um vetor independente. O método `listarOrdenados()` aplica o Merge Sort sobre esse vetor, de acordo com o critério e a direção escolhidos, e devolve um `ResultadoOrdenacao` contendo os livros ordenados e as métricas. O catálogo e seus índices permanecem inalterados.
@@ -204,7 +202,7 @@ O compilador continua sendo o MinGW `g++`.
 
 No menu, use **8** para carregar os livros de demonstração e **9** para ordenar.
 Escolha um critério: **1** título, **2** autor, **3** ano, **4** ISBN ou **5**
-quantidade de vendidos. Em seguida, escolha **1** crescente ou **2** decrescente.
+quantidade de exemplares vendidos. Em seguida, escolha **1** crescente ou **2** decrescente.
 A aplicação exibe todos os campos dos livros ordenados, o total, as comparações,
 as movimentações e o tempo em microssegundos. **0** em qualquer etapa do submenu
 volta ao menu principal. Entradas inválidas são rejeitadas e solicitadas novamente.

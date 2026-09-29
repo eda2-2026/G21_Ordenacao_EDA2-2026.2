@@ -1,0 +1,15 @@
+# Executáveis gerados pelo Makefile ou por compilação manual
+biblioteca
+biblioteca.exe
+*.out
+
+# Diretórios de compilação do CMake
+build/
+build-*/
+cmake-build-*/
+
+# Arquivos temporários e caches
+*.o
+*.obj
+__pycache__/
+*.pyc
