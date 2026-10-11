@@ -2,9 +2,9 @@
 
 ## Alunos
 
-| Matrícula | Aluno |
-| -- | -- |
-| 211041105 | Bruna de Lima Santos |
+| Matrícula | Aluno                         |
+| --------- | ----------------------------- |
+| 211041105 | Bruna de Lima Santos          |
 | 232014333 | Thiago Gomes Pereira de Abreu |
 
 ## Sobre
@@ -45,13 +45,13 @@ O catálogo integra a ordenação por `listarOrdenados()`, disponível na opçã
 
 #### Critérios e normalização
 
-| Critério (`CriterioOrdenacao`) | Comparação do campo principal | Desempates, nesta ordem |
-| -- | -- | -- |
-| `Titulo` | Textual, após normalização | Autor → ISBN |
-| `Autor` | Textual, após normalização | Título → ISBN |
-| `AnoPublicacao` | Numérica, pelo ano | Título → Autor → ISBN |
-| `Isbn` | Textual, pelo ISBN normalizado | Nenhum |
-| `QuantidadeVendidos` | Numérica, pela quantidade de exemplares vendidos | Título → Autor → ISBN |
+| Critério (`CriterioOrdenacao`) | Comparação do campo principal                    | Desempates, nesta ordem |
+| ------------------------------ | ------------------------------------------------ | ----------------------- |
+| `Titulo`                       | Textual, após normalização                       | Autor → ISBN            |
+| `Autor`                        | Textual, após normalização                       | Título → ISBN           |
+| `AnoPublicacao`                | Numérica, pelo ano                               | Título → Autor → ISBN   |
+| `Isbn`                         | Textual, pelo ISBN normalizado                   | Nenhum                  |
+| `QuantidadeVendidos`           | Numérica, pela quantidade de exemplares vendidos | Título → Autor → ISBN   |
 
 - Título e autor seguem as regras de `normalizarTitulo()`: remover espaços nas
   extremidades, reduzir sequências de espaços a um, converter letras para
@@ -89,11 +89,11 @@ identificáveis por um campo não comparado, como a editora.
 
 Cada execução começa com uma nova `MetricasOrdenacao`, com todos os campos em zero.
 
-| Campo | Tipo | Regra |
-| -- | -- | -- |
-| `comparacoes` | `std::uint64_t` | Uma unidade por chamada ao comparador entre dois livros durante a ordenação. As verificações dos campos de desempate fazem parte da mesma chamada. |
-| `movimentacoes` | `std::uint64_t` | Uma unidade por escrita de um livro em uma posição do vetor auxiliar ou do vetor ordenado durante a ordenação, seja por cópia ou movimento. |
-| `tempoMicrossegundos` | `double` | Tempo decorrido da ordenação em microssegundos, medido com `std::chrono::steady_clock`. |
+| Campo                 | Tipo            | Regra                                                                                                                                              |
+| --------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `comparacoes`         | `std::uint64_t` | Uma unidade por chamada ao comparador entre dois livros durante a ordenação. As verificações dos campos de desempate fazem parte da mesma chamada. |
+| `movimentacoes`       | `std::uint64_t` | Uma unidade por escrita de um livro em uma posição do vetor auxiliar ou do vetor ordenado durante a ordenação, seja por cópia ou movimento.        |
+| `tempoMicrossegundos` | `double`        | Tempo decorrido da ordenação em microssegundos, medido com `std::chrono::steady_clock`.                                                            |
 
 Comparações de índices, condições de laços e verificações do caso-base não
 incrementam `comparacoes`. Leituras, alterações de índices e alocação de memória
@@ -131,6 +131,22 @@ O projeto reutiliza o sistema de biblioteca desenvolvido no Trabalho 1, que já 
 As estruturas de busca continuam responsáveis pelo armazenamento e pelas consultas. O método `listarTodos()` recupera os livros das tabelas hash e os retorna em um vetor independente. O método `listarOrdenados()` aplica o Merge Sort sobre esse vetor, de acordo com o critério e a direção escolhidos, e devolve um `ResultadoOrdenacao` contendo os livros ordenados e as métricas. O catálogo e seus índices permanecem inalterados.
 
 ## Screenshots
+
+### Carregamento dos livros de demonstração
+
+![Carregamento dos cinco livros de demonstração e listagem inicial do catálogo](assets/carregamento-inicial.png)
+
+### Exemplo 1: Ordenação por ano de publicação em ordem decrescente
+
+![Livros ordenados por ano de publicação, do mais recente para o mais antigo](assets/exemplo1.png)
+
+### Exemplo 2: Ordenação por título em ordem crescente
+
+![Livros ordenados por título em ordem alfabética crescente](assets/exemplo2.png)
+
+### Exemplo 3: Ordenação por título em ordem decrescente
+
+![Livros ordenados por título em ordem alfabética decrescente](assets/exemplo3.png)
 
 ## [Clique aqui para assistir à apresentação](https://www.youtube.com/watch?v=7hI2rD4HfmQ)
 
@@ -253,7 +269,6 @@ g++ -Wall -Wextra -pedantic -std=c++17 -Iinclude tests/comparadores.cpp src/orde
 O comando acima usa `/tmp` no Linux. No Windows, escolha um caminho de saída
 local com a extensão `.exe` e execute o arquivo correspondente.
 
-
 ## Merge Sort e métricas
 
 `mergeSort()` recebe um `std::vector<Livro>&`, o critério e a direção, ordena o
@@ -291,7 +306,6 @@ g++ -Wall -Wextra -pedantic -std=c++17 -Iinclude tests/merge_sort.cpp src/ordena
 
 Assim como nos testes dos comparadores, no Windows adapte o caminho de saída
 para um executável local com extensão `.exe`.
-
 
 ## Testes de integração da ordenação
 
