@@ -132,7 +132,7 @@ As estruturas de busca continuam responsáveis pelo armazenamento e pelas consul
 
 ## Screenshots
 
-## [Clique aqui para assistir à apresentação](#)
+## [Clique aqui para assistir à apresentação](https://www.youtube.com/watch?v=7hI2rD4HfmQ)
 
 ## Instalação
 
